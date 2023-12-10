@@ -1,0 +1,11 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+.error-toast {
+  @apply bg-zinc-800 border border-zinc-700 text-white;
+}
+
+.success-toast {
+  @apply bg-zinc-800 border border-zinc-700 text-white;
+}
