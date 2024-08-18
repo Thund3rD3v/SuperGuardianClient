@@ -1,4 +1,11 @@
-import { Button, Input, Select, SelectItem, Switch } from "@nextui-org/react";
+import {
+  Button,
+  Input,
+  Select,
+  SelectItem,
+  Switch,
+  Textarea,
+} from "@nextui-org/react";
 import { IAuthState, IChannel } from "../types";
 import { useState } from "react";
 import { errorToast, successToast } from "../toasts";
@@ -20,6 +27,7 @@ function Greetings({ data, channelsData, auth }: Props) {
 
   // Greetings Config
   const [enabled, setEnabled] = useState(data?.data?.enabled);
+  const [title, setTitle] = useState(data?.data?.title);
   const [message, setMessage] = useState(data?.data?.message);
   const [selectedChannel, setSelectedChannel] = useState(
     new Set([data?.data?.channelId])
@@ -35,6 +43,7 @@ function Greetings({ data, channelsData, auth }: Props) {
         },
         body: JSON.stringify({
           enabled,
+          title,
           message,
           channelId: Array.from(selectedChannel)[0],
         }),
@@ -58,6 +67,7 @@ function Greetings({ data, channelsData, auth }: Props) {
   function checkIfSaved() {
     if (
       enabled != data?.data?.enabled ||
+      title != data?.data?.title ||
       message != data?.data?.message ||
       !IsSetsEqual(selectedChannel, new Set([data?.data?.channelId]))
     ) {
@@ -68,7 +78,7 @@ function Greetings({ data, channelsData, auth }: Props) {
   }
 
   return (
-    <div className="px-4 py-6 max-h-72 border bg-zinc-800/20 border-zinc-800 shadow-lg w-full md:max-w-md max-w-none rounded-lg flex flex-col">
+    <div className="px-4 py-6 border bg-zinc-800/20 border-zinc-800 shadow-lg w-full md:max-w-md max-w-none rounded-lg flex flex-col">
       <div className="flex justify-between">
         <h2 className="text-2xl font-semibold flex gap-2 items-center">
           Greetings
@@ -81,7 +91,8 @@ function Greetings({ data, channelsData, auth }: Props) {
         />
       </div>
       <div className="mt-4 space-y-4 flex-grow">
-        <Input label="Message" onValueChange={setMessage} value={message} />
+        <Input label="Title" onValueChange={setTitle} value={title} />
+        <Textarea label="Message" onValueChange={setMessage} value={message} />
         <Select
           label="Channel"
           onSelectionChange={setSelectedChannel}

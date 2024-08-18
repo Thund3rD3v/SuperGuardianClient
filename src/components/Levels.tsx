@@ -1,4 +1,11 @@
-import { Button, Input, Select, SelectItem, Switch } from "@nextui-org/react";
+import {
+  Button,
+  Input,
+  Select,
+  SelectItem,
+  Switch,
+  Textarea,
+} from "@nextui-org/react";
 import { IAuthState, IChannel } from "../types";
 import { useState } from "react";
 import { errorToast, successToast } from "../toasts";
@@ -20,6 +27,7 @@ function Levels({ data, channelsData, auth }: Props) {
 
   // Levels Config
   const [enabled, setEnabled] = useState(data?.data?.enabled);
+  const [title, setTitle] = useState(data?.data?.title);
   const [message, setMessage] = useState(data?.data?.message);
   const [coolDown, setCoolDown] = useState(data?.data?.coolDown);
   const [minXp, setMinXp] = useState(data?.data?.minXp);
@@ -41,6 +49,7 @@ function Levels({ data, channelsData, auth }: Props) {
         },
         body: JSON.stringify({
           enabled,
+          title,
           message,
           coolDown,
           minXp,
@@ -69,6 +78,7 @@ function Levels({ data, channelsData, auth }: Props) {
   function checkIfSaved() {
     if (
       enabled != data?.data?.enabled ||
+      title != data?.data?.title ||
       message != data?.data?.message ||
       coolDown != data?.data?.coolDown ||
       minXp != data?.data?.minXp ||
@@ -84,7 +94,7 @@ function Levels({ data, channelsData, auth }: Props) {
   }
 
   return (
-    <div className="px-4 py-6 max-h-80 overflow-y-auto border bg-zinc-800/20 border-zinc-800 shadow-lg w-full max-w-none md:max-w-md rounded-lg">
+    <div className="px-4 py-6 max-h-96 overflow-y-auto border bg-zinc-800/20 border-zinc-800 shadow-lg w-full max-w-none md:max-w-md rounded-lg">
       <div className="flex justify-between">
         <h2 className="text-2xl font-semibold flex gap-2 items-center">
           Levels
@@ -97,7 +107,8 @@ function Levels({ data, channelsData, auth }: Props) {
         />
       </div>
       <div className="mt-4 space-y-4 flex-grow">
-        <Input label="Message" onValueChange={setMessage} value={message} />
+        <Input label="Title" onValueChange={setTitle} value={title} />
+        <Textarea label="Message" onValueChange={setMessage} value={message} />
         <Input
           label="Cool Down"
           onValueChange={(value) => {
