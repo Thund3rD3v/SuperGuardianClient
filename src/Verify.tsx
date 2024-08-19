@@ -1,6 +1,9 @@
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 import { Avatar, Progress } from "@nextui-org/react";
+import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import useSWR from "swr/immutable";
+import { errorToast } from "./toasts";
 
 export default function Verify() {
   const {
@@ -10,6 +13,34 @@ export default function Verify() {
   } = useSWR(`${import.meta.env.VITE_API}/info`, (url: string) =>
     fetch(url).then((res) => res.json())
   );
+  const [verified, setVerified] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const [searchParams] = useSearchParams();
+
+  const id = searchParams.get("id");
+
+  async function handleVerification(verificationToken: string) {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API}/verify`, {
+        method: "POST",
+        body: JSON.stringify({
+          id,
+          verificationToken,
+        }),
+      });
+      const data = await res.json();
+      if (data?.success) {
+        setVerified(true);
+        setMessage(data?.message);
+      } else {
+        errorToast(data?.message);
+      }
+    } catch (err) {
+      console.error(err);
+      errorToast("Uh oh, an error has encountered");
+    }
+  }
 
   if (isLoading) {
     return (
@@ -38,11 +69,20 @@ export default function Verify() {
           </h1>
         </div>
 
-        <HCaptcha
-          theme="dark"
-          sitekey={import.meta.env.VITE_HCAPTCHA_KEY}
-          onVerify={(token, ekey) => console.info(token, ekey)}
-        />
+        {verified ? (
+          <p
+            className="text-center font-medium"
+            dangerouslySetInnerHTML={{ __html: message }}
+          />
+        ) : (
+          <div>
+            <HCaptcha
+              theme="dark"
+              sitekey={import.meta.env.VITE_HCAPTCHA_KEY}
+              onVerify={(token) => handleVerification(token)}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
